@@ -1,0 +1,58 @@
+# 该文件仅是一个配置文件的模型，不要直接使用，请自行修改相关配置
+
+spring:
+  # 数据库连接信息
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/xxx
+    username: xxx
+    password: xxx
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mail:
+    host: smtp.163.com
+    # 默认端口号 465
+    port: 465
+    username: xxx
+    password: xxx
+    protocol: smtp
+    test-connection: true
+    default-encoding: UTF-8
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.ssl.enable: true
+      mail.display.sendmail: hustoj
+# 配置 MyBatis 日志
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# 配置阿里云OSS
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    access-key-id: xxx
+    access-key-secret: xxx
+    # OSS bucket 名称
+    bucket-name: xxx
+    # 图片文件在 bucket 中的存放路径
+    images-path: xxx/
+    # 代码文件在 bucket 中的存放路径
+    code-path: xxx/
+    # 题目文件在 bucket 中的存放路径
+    problem-path: xxx/
+# 配置 Docker
+docker:
+  host: tcp://localhost:2375
+  # Docker API 版本，使用 docker version 命令查看
+  api-version: xxx(如1.44)
+# 题库设置
+problem:
+  # 题目在本机的存放路径
+  path: xxx
+  # 代码文件的临时存放路径
+  code-path: xxx

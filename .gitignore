@@ -33,6 +33,6 @@ build/
 .vscode/
 
 ### hide configuration ###
-application.properties
-application.yml
-application.yaml
+application*.yml
+!application.yml
+!application-template.yml

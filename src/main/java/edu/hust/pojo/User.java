@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 @TableName("`user`")
 public class User {
     @TableId(type = IdType.AUTO)
-    private Integer id;
-    private String username;
-    private String password;
-    private String email;
-    private String avatar;
+    private Integer id; // 用户id
+    private String username; // 用户名
+    private String password; // 密码
+    private String email; // 邮箱
+    private String avatar; // 头像
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createTime; // 创建时间
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    private LocalDateTime updateTime; // 更新时间
 }

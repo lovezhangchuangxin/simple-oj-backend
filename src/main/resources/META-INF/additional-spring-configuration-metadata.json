@@ -1,0 +1,49 @@
+{
+  "properties": [
+    {
+      "name": "docker.host",
+      "type": "java.lang.String",
+      "description": "docker host."
+    },
+    {
+      "name": "docker.api-version",
+      "type": "java.lang.String",
+      "description": "docker api version."
+    },
+    {
+      "name": "aliyun.oss.images-path",
+      "type": "java.lang.String",
+      "description": "aliyun oss images path."
+    },
+    {
+      "name": "aliyun.oss.code-path",
+      "type": "java.lang.String",
+      "description": "aliyun oss code path."
+    },
+    {
+      "name": "aliyun.oss.problem-path",
+      "type": "java.lang.String",
+      "description": "aliyun oss problem path."
+    },
+    {
+      "name": "problem.path",
+      "type": "java.lang.String",
+      "description": "problem path."
+    },
+    {
+      "name": "problem.code-path",
+      "type": "java.lang.String",
+      "description": "problem code path."
+    },
+    {
+      "name": "jwt.expiration",
+      "type": "java.lang.String",
+      "description": "jwt expiration."
+    },
+    {
+      "name": "jwt.tokenHead",
+      "type": "java.lang.String",
+      "description": "jwt token head."
+    }
+  ]
+}

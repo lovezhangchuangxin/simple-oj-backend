@@ -18,7 +18,17 @@ public enum ExceptionCodeEnum {
     VERIFICATION_CODE_ERROR(1030, "验证码错误"),
     VERIFICATION_CODE_EXISTED(1031, "验证码已存在"),
 
-    UPLOAD_AVATAR_ERROR(1040, "上传头像失败");
+    UPLOAD_AVATAR_ERROR(1040, "上传头像失败"),
+
+    PROBLEM_CREATE_ERROR(1050, "题目创建失败"),
+    TIME_OR_MEMORY_ERROR(1051, "题目内存或时间参数错误"),
+    PROBLEM_NOT_EXIST(1052, "题目不存在或不属于自己"),
+    PROBLEM_DELETE_ERROR(1053, "题目删除失败"),
+    PROBLEM_UPDATE_ERROR(1054, "题目更新失败"),
+    PROBLEM_READ_ERROR(1055, "题目读取失败"),
+    LANGUAGE_NOT_EXIST(1056, "暂不支持该语言"),
+    USER_CODE_SAVE_ERROR(1057, "用户代码保存失败"),
+    USER_CODE_DELETE_ERROR(1058, "用户代码删除失败");
 
 
     private final Integer code;

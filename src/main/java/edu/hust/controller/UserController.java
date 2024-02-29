@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -20,13 +22,11 @@ public class UserController {
     private final UserService userService;
     private final VerificationCodeServiceImpl verificationCodeServiceImpl;
     private final MailService mailService;
-    private final AliOSSUtils aliOSSUtils;
 
     public UserController(UserService userService, VerificationCodeServiceImpl verificationCodeServiceImpl, MailService mailService, AliOSSUtils aliOSSUtils) {
         this.userService = userService;
         this.verificationCodeServiceImpl = verificationCodeServiceImpl;
         this.mailService = mailService;
-        this.aliOSSUtils = aliOSSUtils;
     }
 
     /**
@@ -67,23 +67,25 @@ public class UserController {
      */
     @PostMapping("/login")
     public Result login(@RequestBody User user) {
-        String token = userService.login(user);
-        return Result.success("登录成功", token);
+        Map<String, Object> map = userService.login(user);
+        return Result.success("登录成功", map);
     }
 
     /**
      * 上传头像
      */
-    @PostMapping("/uploadAvatar")
-    public Result uploadAvatar(MultipartFile image) {
-        // JwtUtils.getClaims().forEach((k, v) -> System.out.println(k + " " + v.asString()));
+    @PostMapping("/avatar")
+    public Result uploadAvatar(MultipartFile file) {
+        String url = userService.uploadAvatar(file);
+        return Result.success("上传头像成功", url);
+    }
 
-        try {
-            String url = aliOSSUtils.upload(image);
-            return Result.success("上传成功", url);
-        } catch (Exception e) {
-            log.error("上传头像失败", e);
-            throw new HustOjException(ExceptionCodeEnum.UPLOAD_AVATAR_ERROR);
-        }
+    /**
+     * 获取用户信息
+     */
+    @GetMapping("/info")
+    public Result getUserInfo() {
+        User user = userService.getUserInfo();
+        return Result.success("获取用户信息成功", user);
     }
 }

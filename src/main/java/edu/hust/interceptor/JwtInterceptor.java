@@ -24,6 +24,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         try {
             // 如果验证成功放行请求
             DecodedJWT verify = JwtUtils.verify(token);
+            request.setAttribute("userId", verify.getClaim("userId").asString());
             return true;
         } catch (Exception exception) {
             map.put("code", "401");

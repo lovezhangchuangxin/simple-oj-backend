@@ -61,4 +61,11 @@ public class JwtUtils {
         String token = request.getHeader("Authorization");
         return getClaims(token);
     }
+
+    /**
+     * 获取用户 id
+     */
+    public static Integer getUserId() {
+        return Integer.parseInt(getClaims().get("userId").asString());
+    }
 }
