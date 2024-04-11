@@ -28,7 +28,12 @@ public enum ExceptionCodeEnum {
     PROBLEM_READ_ERROR(1055, "题目读取失败"),
     LANGUAGE_NOT_EXIST(1056, "暂不支持该语言"),
     USER_CODE_SAVE_ERROR(1057, "用户代码保存失败"),
-    USER_CODE_DELETE_ERROR(1058, "用户代码删除失败");
+    USER_CODE_DELETE_ERROR(1058, "用户代码删除失败"),
+
+    BULLETIN_NOT_FOUND(1070, "公告不存在"),
+    BULLETIN_ADD_ERROR(1071, "公告添加失败"),
+    BULLETIN_DELETE_ERROR(1072, "公告删除失败"),
+    BULLETIN_UPDATE_ERROR(1073, "公告更新失败");
 
 
     private final Integer code;

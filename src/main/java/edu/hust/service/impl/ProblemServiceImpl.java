@@ -199,7 +199,8 @@ public class ProblemServiceImpl implements ProblemService {
     /**
      * 删除题目
      */
-    public boolean deleteProblem(Integer id) {
+    @Override
+    public void deleteProblem(Integer id) {
         Integer userId = JwtUtils.getUserId();
 
         Problem problem = problemMapper.selectById(id);
@@ -211,14 +212,13 @@ public class ProblemServiceImpl implements ProblemService {
 
         problemMapper.deleteById(id);
         deleteProblemFile(problem);
-
-        return true;
     }
 
     /**
      * 更新题目
      */
-    public boolean updateProblem(Problem problem) {
+    @Override
+    public void updateProblem(Problem problem) {
         Integer userId = JwtUtils.getUserId();
         Problem oldProblem = problemMapper.selectById(problem.getId());
 
@@ -227,7 +227,6 @@ public class ProblemServiceImpl implements ProblemService {
             throw new HustOjException(ExceptionCodeEnum.PROBLEM_NOT_EXIST);
         }
 
-        problem.setAuthorId(null);
         problem.setSubmitCount(null);
         problem.setAcceptCount(null);
         problem.setSampleCount((byte) problem.getSampleGroup().size());
@@ -237,12 +236,9 @@ public class ProblemServiceImpl implements ProblemService {
         try {
             problemMapper.updateById(problem);
             createProblemFile(problem);
-            deleteProblemFile(oldProblem);
         } catch (IOException e) {
             throw new HustOjException(ExceptionCodeEnum.PROBLEM_UPDATE_ERROR);
         }
-
-        return true;
     }
 
     /**

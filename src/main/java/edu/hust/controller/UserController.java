@@ -44,7 +44,7 @@ public class UserController {
             throw new HustOjException(ExceptionCodeEnum.VERIFICATION_CODE_EXISTED);
         }
 
-        mailService.sendSimpleMail(email, "HustOj验证码", "您的验证码为：" + verificationCodeServiceImpl.getOrGenerateCodeForUser(email));
+        mailService.sendSimpleMail(email, "SimpleOj验证码", "您的验证码为：" + verificationCodeServiceImpl.getOrGenerateCodeForUser(email));
 
         return Result.success("验证码发送成功");
     }

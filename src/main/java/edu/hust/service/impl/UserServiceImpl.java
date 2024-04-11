@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
 
         // 防止用户自行插入数据
         user.setId(null);
+        user.setRole(0);
         user.setCreateTime(null);
         user.setUpdateTime(null);
 

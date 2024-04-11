@@ -64,6 +64,26 @@ public class ProblemController {
     }
 
     /**
+     * 删除题目
+     */
+    @GetMapping("/delete/{id}")
+    public Result deleteProblem(@PathVariable Integer id) {
+        problemService.deleteProblem(id);
+
+        return Result.success("题目删除成功");
+    }
+
+    /**
+     * 更新题目
+     */
+    @PostMapping("/update")
+    public Result updateProblem(@RequestBody Problem problem) {
+        problemService.updateProblem(problem);
+
+        return Result.success("题目更新成功");
+    }
+
+    /**
      * 提交代码
      */
     @PostMapping("/submit")

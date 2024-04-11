@@ -14,4 +14,8 @@ public interface ProblemService {
     Map<String, Object> listProblemByPageWithStatus(Integer page, Integer limit);
 
     boolean createProblem(Problem problem);
+
+    void deleteProblem(Integer id);
+
+    void updateProblem(Problem problem);
 }

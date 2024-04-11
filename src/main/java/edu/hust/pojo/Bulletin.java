@@ -6,15 +6,14 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("`user`")
-public class User {
+@TableName("`bulletin`")
+public class Bulletin {
     @TableId(type = IdType.AUTO)
-    private Integer id; // 用户id
-    private String username; // 用户名
-    private String password; // 密码
-    private String email; // 邮箱
-    private String avatar; // 头像
-    private Integer role; // 角色 0 普通用户 1 管理员
+    private Integer id; // 公告id
+    private String title; // 公告标题
+    @TableField(exist = false)
+    private String content; // 公告内容
+    private Integer authorId; // 作者id
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime; // 创建时间
     @TableField(fill = FieldFill.INSERT_UPDATE)
