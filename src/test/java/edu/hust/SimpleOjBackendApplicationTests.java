@@ -44,7 +44,7 @@ class SimpleOjBackendApplicationTests {
     void testGenJwt() {
         HashMap<String, String> map = new HashMap<>();
         map.put("username", "zcx");
-        String token = JwtUtils.genToken(map);
+        String token = JwtUtils.genToken(map, false);
         System.out.println(token);
         JwtUtils.verify(token);
         JwtUtils.getClaims(token).forEach((k, v) -> System.out.println(k + ": " + v.asString()));

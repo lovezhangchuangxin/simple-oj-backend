@@ -17,6 +17,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HustOjException.class)
     public Result handleHustException(HustOjException e) {
+        if (e.getCode().equals(ExceptionCodeEnum.COMPILE_ERROR.getCode())) {
+            return new Result(e.getCode(), ExceptionCodeEnum.COMPILE_ERROR.getMsg(), e.getMessage());
+        }
+
         return Result.fail(e.getCode(), e.getMessage());
     }
 }

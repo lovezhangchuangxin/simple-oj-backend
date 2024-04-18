@@ -21,6 +21,6 @@ public class InterceptConfig implements WebMvcConfigurer {
                 // 拦截的路径 需要进行token验证的路径
                 .addPathPatterns("/**")
                 // 放行的路径
-                .excludePathPatterns("/user/register/*", "/user/login", "/user/verification", "/user/test");
+                .excludePathPatterns("/user/register/*", "/user/login", "/user/verification", "/user/resetPassword", "/user/test");
     }
 }

@@ -1,7 +1,6 @@
 package edu.hust.service;
 
 import edu.hust.pojo.ProblemSolveRecord;
-import edu.hust.sandbox.CodeExecuteResult;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,11 @@ public interface ProblemSolveService {
 
     List<ProblemSolveRecord> listProblemSolveRecordByTime(Long startTime, Long endTime);
 
-    Map<String, Integer> listProblemSolveRecordNumber(Long startTime, Long endTime);
+    Map<String, Object> listProblemSolveRecordNumber(Long startTime, Long endTime);
 
-    void saveProblemSolveRecord(Integer problemId, String language, boolean accept, List<CodeExecuteResult> codeExecuteResults);
+    List<Map<String, Object>> listRecentAcceptProblemSolveRecord(Integer limit);
+
+    Map<String, Object> listProblemSolveRecordByPage(Integer page, Integer limit, Integer problemId, Integer userId, Byte status);
+
+    void saveProblemSolveRecord(Integer problemId, String language, boolean accept, int time, int memory);
 }

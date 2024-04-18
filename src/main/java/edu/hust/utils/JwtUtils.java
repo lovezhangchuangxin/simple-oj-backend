@@ -20,22 +20,29 @@ public class JwtUtils {
      * 密钥要自己保管好
      */
     private static final String secret = "hustojzcx";
+
     /**
      * 过期时间
      */
     private static final Long expire = 7 * 24 * 3600 * 1000L;
 
     /**
+     * 管理员过期时间，十分钟
+     */
+    private static final Long adminExpire = 10 * 60 * 1000L;
+
+    /**
      * 传入 payload 生成 token
      *
      * @return token
      */
-    public static String genToken(@Nullable Map<String, String> map) {
+    public static String genToken(@Nullable Map<String, String> map, boolean isAdmin) {
         JWTCreator.Builder builder = JWT.create();
         if (map != null) {
             map.forEach(builder::withClaim);
         }
-        builder.withExpiresAt(new Date(System.currentTimeMillis() + expire));
+        builder.withClaim("isAdmin", isAdmin);
+        builder.withExpiresAt(new Date(System.currentTimeMillis() + (isAdmin ? adminExpire : expire)));
         return builder.sign(Algorithm.HMAC256(secret));
     }
 
@@ -67,5 +74,12 @@ public class JwtUtils {
      */
     public static Integer getUserId() {
         return Integer.parseInt(getClaims().get("userId").asString());
+    }
+
+    /**
+     * 判断是否是管理员
+     */
+    public static boolean isAdmin() {
+        return getClaims().get("isAdmin").asBoolean();
     }
 }

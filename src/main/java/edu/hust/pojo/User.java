@@ -14,6 +14,7 @@ public class User {
     private String password; // 密码
     private String email; // 邮箱
     private String avatar; // 头像
+    private String studentId; // 学号
     private Integer role; // 角色 0 普通用户 1 管理员
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime; // 创建时间

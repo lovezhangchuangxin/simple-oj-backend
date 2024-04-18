@@ -35,4 +35,12 @@ public interface UserService {
      * @return 用户信息
      */
     User getUserInfo();
+
+    void updateUserInfo(User user);
+
+    void updatePassword(String oldPassword, String newPassword);
+
+    String refreshToken();
+
+    void resetPassword(String email);
 }

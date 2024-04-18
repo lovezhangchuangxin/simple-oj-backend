@@ -88,4 +88,40 @@ public class UserController {
         User user = userService.getUserInfo();
         return Result.success("获取用户信息成功", user);
     }
+
+    /**
+     * 更新用户信息
+     */
+    @PostMapping("/update")
+    public Result updateUserInfo(@RequestBody User user) {
+        userService.updateUserInfo(user);
+        return Result.success("更新用户信息成功");
+    }
+
+    /**
+     * 更新密码
+     */
+    @PostMapping("/updatePassword")
+    public Result updatePassword(@RequestBody Map<String, String> map) {
+        userService.updatePassword(map.get("oldPassword"), map.get("newPassword"));
+        return Result.success("更新密码成功");
+    }
+
+    /**
+     * 刷新 token
+     */
+    @GetMapping("/refreshToken")
+    public Result refreshToken() {
+        String token = userService.refreshToken();
+        return Result.success("刷新 token 成功", token);
+    }
+
+    /**
+     * 重置密码
+     */
+    @PostMapping("/resetPassword")
+    public Result resetPassword(@RequestBody Map<String, String> map) {
+        userService.resetPassword(map.get("email"));
+        return Result.success("重置密码成功");
+    }
 }

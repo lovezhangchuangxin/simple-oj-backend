@@ -29,6 +29,8 @@ public class Problem {
     private Integer timeLimit; // 时间限制
     private Integer submitCount; // 提交数
     private Integer acceptCount; // 通过数
+    private Byte difficulty; // 难度 0 无 1 简单 2 中等 3 困难
+    private Boolean acceptNote; // 是否接受题解
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime; // 创建时间
     @TableField(fill = FieldFill.INSERT_UPDATE)

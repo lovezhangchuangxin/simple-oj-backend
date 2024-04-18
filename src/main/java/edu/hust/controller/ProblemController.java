@@ -64,6 +64,15 @@ public class ProblemController {
     }
 
     /**
+     * 分页条件查询
+     */
+    @GetMapping("/listByCondition")
+    public Result listProblemByCondition(Integer page, Integer limit, String title, String tag, Byte difficulty) {
+        Map<String, Object> res = problemService.listProblemByPageWithCondition(page, limit, title, tag, difficulty);
+        return Result.success("题目列表获取成功", res);
+    }
+
+    /**
      * 删除题目
      */
     @GetMapping("/delete/{id}")
@@ -94,11 +103,40 @@ public class ProblemController {
     }
 
     /**
+     * 提交代码
+     */
+    @PostMapping("/submitCode")
+    public Result submitCode(@RequestBody ProblemSolution problemSolution) {
+        List<Map<String, Object>> res = problemService.judge(problemSolution.getProblemId(), problemSolution.getCode(), problemSolution.getLanguage());
+
+        return Result.success("提交成功", res);
+    }
+
+
+    /**
      * 查询指定时间范围内的提交记录
      */
     @GetMapping("/recordByTimeRange")
     public Result listProblemSolveRecord(Long startTime, Long endTime) {
-        Map<String, Integer> recordMap = problemSolveService.listProblemSolveRecordNumber(startTime, endTime);
+        Map<String, Object> recordMap = problemSolveService.listProblemSolveRecordNumber(startTime, endTime);
         return Result.success("提交记录获取成功", recordMap);
+    }
+
+    /**
+     * 查询最近通过的提交记录
+     */
+    @GetMapping("/recentAcceptRecord")
+    public Result listRecentAcceptProblemSolveRecord(Integer limit) {
+        List<Map<String, Object>> problemSolveRecords = problemSolveService.listRecentAcceptProblemSolveRecord(limit);
+        return Result.success("最近通过的提交记录获取成功", problemSolveRecords);
+    }
+
+    /**
+     * 分页条件查询提交记录
+     */
+    @GetMapping("/recordByCondition")
+    public Result listProblemSolveRecordByCondition(Integer page, Integer limit, Integer problemId, Integer userId, Byte status) {
+        Map<String, Object> res = problemSolveService.listProblemSolveRecordByPage(page, limit, problemId, userId, status);
+        return Result.success("提交记录获取成功", res);
     }
 }

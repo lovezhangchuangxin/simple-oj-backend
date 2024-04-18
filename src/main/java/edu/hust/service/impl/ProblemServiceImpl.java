@@ -8,9 +8,11 @@ import edu.hust.mapper.ProblemMapper;
 import edu.hust.pojo.Problem;
 import edu.hust.pojo.ProblemSample;
 import edu.hust.sandbox.CodeExecuteResult;
+import edu.hust.sandbox.CodeResult;
 import edu.hust.sandbox.DockerSandbox;
 import edu.hust.service.ProblemService;
 import edu.hust.service.ProblemSolveService;
+import edu.hust.utils.JudgerUtils;
 import edu.hust.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -71,6 +73,8 @@ public class ProblemServiceImpl implements ProblemService {
 
     /**
      * 执行代码
+     *
+     * @deprecated
      */
     @Override
     public List<CodeExecuteResult> executeCode(Integer id, String code, String language) {
@@ -99,9 +103,14 @@ public class ProblemServiceImpl implements ProblemService {
         deleteUserCodeFolder(id);
         // 判断代码执行结果
         boolean accept = judgeCodeExecuteResult(problem, codeExecuteResults);
-        // 保存执行记录
-        problemSolveService.saveProblemSolveRecord(id, language, accept, codeExecuteResults);
-
+        // 下面代码是错误的，没有使用的
+        if (accept) {
+            // 保存执行记录
+            problemSolveService.saveProblemSolveRecord(id, language, accept, 0, 0);
+        } else {
+            // 保存执行记录
+            problemSolveService.saveProblemSolveRecord(id, language, accept, 0, 0);
+        }
         return codeExecuteResults;
     }
 
@@ -138,6 +147,84 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     /**
+     * 判题
+     */
+    @Override
+    public List<Map<String, Object>> judge(Integer id, String code, String language) {
+        if (!language.equals("c") && !language.equals("cpp")) {
+            throw new HustOjException(ExceptionCodeEnum.LANGUAGE_NOT_EXIST);
+        }
+        // 先把用户代码字符串写入文件
+        saveUserCode(id, code, language);
+        // 编译代码
+        String codePath = generateUserCodePath(id) + "/" + "Main" + generateFileExt(language);
+        String exePath = generateUserCodePath(id) + "/" + "Main";
+        JudgerUtils.compile(language, codePath, exePath);
+        // 获取题目对象
+        Problem problem = problemMapper.selectById(id);
+        // 结果
+        List<Map<String, Object>> resMap = new ArrayList<>();
+        // 正确的个数
+        int acceptCount = 0;
+        int time = 1, memory = 1;
+        // 读取测试用例
+        for (int i = 1; i <= problem.getSampleCount(); i++) {
+            Map<String, Object> map = new HashMap<>();
+            String inputPath = "problemSet/" + problem.getAuthorId() + "/" + problem.getId() + "/in/" + i + ".in";
+            String outputPath = "code/" + id + "/" + i + ".out";
+            String error_path = "code/" + id + "/" + i + ".err";
+            File answerFile = new File(generateTestCasePath(problem, i, false));
+            CodeResult stat = JudgerUtils.execute(language, "code/" + id + "/Main", inputPath, outputPath, error_path, problem.getTimeLimit(), problem.getMemoryLimit() * 1024 * 1024);
+            map.put("stat", stat);
+            if (stat.result != 0) {
+                continue;
+            }
+            String output, answer;
+            try {
+                output = FileUtils.readFileToString(new File(outputPath), "UTF-8");
+                answer = FileUtils.readFileToString(answerFile, "UTF-8");
+            } catch (IOException e) {
+                throw new HustOjException(ExceptionCodeEnum.PROBLEM_READ_ERROR);
+            }
+
+            if (!output.equals(answer)) {
+                // 6 表示答案错误
+                stat.setResult(6);
+                map.put("output", output);
+            } else {
+                acceptCount++;
+                time += stat.real_time;
+                memory += stat.memory;
+            }
+            resMap.add(map);
+        }
+        boolean accept = acceptCount == problem.getSampleCount();
+        if (acceptCount == 0) acceptCount = 1;
+        // 获取平均时间和内存
+        time /= acceptCount;
+        memory /= (acceptCount * 1024 * 1024);
+        // 保存执行记录
+        problemSolveService.saveProblemSolveRecord(id, language, accept, time, memory);
+        // 修改题目通过情况
+        if (accept) {
+            if (problem.getAcceptCount() == null) {
+                problem.setAcceptCount(1);
+            } else {
+                problem.setAcceptCount(problem.getAcceptCount() + 1);
+            }
+        }
+        if (problem.getSubmitCount() == null) {
+            problem.setSubmitCount(1);
+        } else {
+            problem.setSubmitCount(problem.getSubmitCount() + 1);
+        }
+        problemMapper.updateById(problem);
+        // 删除用户代码文件夹
+        deleteUserCodeFolder(id);
+        return resMap;
+    }
+
+    /**
      * 查询用户自己发布的题目
      */
     public List<Problem> listProblemByUserId() {
@@ -150,7 +237,7 @@ public class ProblemServiceImpl implements ProblemService {
      */
     public List<Problem> listProblemByPage(Integer page, Integer limit) {
         return problemMapper.selectList(new LambdaQueryWrapper<Problem>()
-                .select(Problem::getId, Problem::getTitle, Problem::getTag, Problem::getSubmitCount, Problem::getAcceptCount)
+                .select(Problem::getId, Problem::getTitle, Problem::getTag, Problem::getSubmitCount, Problem::getAcceptCount, Problem::getDifficulty)
                 .last("limit " + page * limit + "," + limit));
     }
 
@@ -161,8 +248,36 @@ public class ProblemServiceImpl implements ProblemService {
     public Map<String, Object> listProblemByPageWithStatus(Integer page, Integer limit) {
         List<Problem> problems = listProblemByPage(page, limit);
         List<Integer> ids = problemSolveService.listProblemSolveRecord(problems.stream().map(Problem::getId).toList());
-
         Map<String, Object> map = new HashMap<>();
+        map.put("problems", problems);
+        map.put("ids", ids);
+        // 题目总数
+        map.put("total", problemMapper.selectCount(null));
+        return map;
+    }
+
+    /**
+     * 分页条件查询题目基础信息
+     */
+    @Override
+    public Map<String, Object> listProblemByPageWithCondition(Integer page, Integer limit, String title, String tag, Byte difficulty) {
+        Map<String, Object> map = new HashMap<>();
+        LambdaQueryWrapper<Problem> wrapper = new LambdaQueryWrapper<>();
+        if (title != null && !title.isEmpty()) {
+            wrapper.like(Problem::getTitle, title);
+        }
+        if (tag != null && !tag.isEmpty()) {
+            wrapper.like(Problem::getTag, tag);
+        }
+        if (difficulty != null && difficulty != 0) {
+            wrapper.eq(Problem::getDifficulty, difficulty);
+        }
+        // 题目总数
+        map.put("total", problemMapper.selectCount(wrapper));
+        List<Problem> problems = problemMapper.selectList(wrapper
+                .select(Problem::getId, Problem::getTitle, Problem::getTag, Problem::getSubmitCount, Problem::getAcceptCount, Problem::getDifficulty)
+                .last("limit " + page * limit + "," + limit));
+        List<Integer> ids = problems.isEmpty() ? List.of() : problemSolveService.listProblemSolveRecord(problems.stream().map(Problem::getId).toList());
         map.put("problems", problems);
         map.put("ids", ids);
         return map;
@@ -183,6 +298,7 @@ public class ProblemServiceImpl implements ProblemService {
         problem.setUpdateTime(null);
         problem.setSubmitCount(null);
         problem.setAcceptCount(null);
+        problem.setAcceptNote(true);
 
         validateMemoryAndTime(problem);
 
@@ -222,20 +338,27 @@ public class ProblemServiceImpl implements ProblemService {
         Integer userId = JwtUtils.getUserId();
         Problem oldProblem = problemMapper.selectById(problem.getId());
 
-        // 只能更新自己的题目
-        if (oldProblem == null || !oldProblem.getAuthorId().equals(userId)) {
+        // 只能更新自己的题目，除非是管理员
+        boolean isAdmin = JwtUtils.isAdmin();
+        System.out.println("是否管理员：" + isAdmin);
+        if (oldProblem == null || (!isAdmin && !oldProblem.getAuthorId().equals(userId))) {
             throw new HustOjException(ExceptionCodeEnum.PROBLEM_NOT_EXIST);
         }
 
         problem.setSubmitCount(null);
         problem.setAcceptCount(null);
-        problem.setSampleCount((byte) problem.getSampleGroup().size());
-
-        validateMemoryAndTime(problem);
+        // 是否修改了题目的内容
+        boolean isChangeProblemContent = problem.getSampleCount() != null && problem.getSampleGroup() != null;
+        if (isChangeProblemContent) {
+            validateMemoryAndTime(problem);
+            problem.setSampleCount((byte) problem.getSampleGroup().size());
+        }
 
         try {
             problemMapper.updateById(problem);
-            createProblemFile(problem);
+            if (isChangeProblemContent) {
+                createProblemFile(problem);
+            }
         } catch (IOException e) {
             throw new HustOjException(ExceptionCodeEnum.PROBLEM_UPDATE_ERROR);
         }
@@ -396,7 +519,7 @@ public class ProblemServiceImpl implements ProblemService {
     public void saveUserCode(Integer id, String code, String language) {
         String codeFilePath = generateUserCodePath(id) + "/" + "Main" + generateFileExt(language);
         File file = new File(codeFilePath);
-        code = dockerSandbox.redirectInput(code);
+//        code = dockerSandbox.redirectInput(code);
         try {
             FileUtils.writeStringToFile(file, code, "UTF-8");
         } catch (IOException e) {

@@ -33,7 +33,18 @@ public enum ExceptionCodeEnum {
     BULLETIN_NOT_FOUND(1070, "公告不存在"),
     BULLETIN_ADD_ERROR(1071, "公告添加失败"),
     BULLETIN_DELETE_ERROR(1072, "公告删除失败"),
-    BULLETIN_UPDATE_ERROR(1073, "公告更新失败");
+    BULLETIN_UPDATE_ERROR(1073, "公告更新失败"),
+
+    COMPILE_ERROR(1080, "编译错误"),
+    EXECUTE_ERROR(1081, "执行错误"),
+
+    PERMISSION_DENIED(1090, "权限不足"),
+
+    PROBLEM_NOTE_WRITE_ERROR(1100, "题解写入失败"),
+    PROBLEM_NOTE_READ_ERROR(1101, "题解读取失败"),
+    PROBLEM_NOTE_DELETE_ERROR(1102, "题解删除失败"),
+    PROBLEM_NOTE_EXIST(1103, "题解已存在"),
+    PROBLEM_NOTE_NOT_EXIST(1104, "题解不存在");
 
 
     private final Integer code;

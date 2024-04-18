@@ -11,7 +11,11 @@ public interface ProblemService {
 
     List<CodeExecuteResult> executeCode(Integer id, String code, String language);
 
+    List<Map<String, Object>> judge(Integer id, String code, String language);
+
     Map<String, Object> listProblemByPageWithStatus(Integer page, Integer limit);
+
+    Map<String, Object> listProblemByPageWithCondition(Integer page, Integer limit, String title, String tag, Byte difficulty);
 
     boolean createProblem(Problem problem);
 
