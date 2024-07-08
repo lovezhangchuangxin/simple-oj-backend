@@ -48,7 +48,10 @@ public class BulletinServiceImpl implements BulletinService {
         // 查询作者id对应的作者名
         List<Integer> ids = new ArrayList<>();
         bulletins.forEach(bulletin -> ids.add(bulletin.getAuthorId()));
-        List<User> authors = userMapper.selectBatchIds(ids);
+        List<User> authors = new ArrayList<>();
+        if (!ids.isEmpty()) {
+            authors = userMapper.selectBatchIds(ids);
+        }
         Map<Integer, String> authorMap = new HashMap<>();
         authors.forEach(user -> authorMap.put(user.getId(), user.getUsername()));
 
@@ -64,6 +67,8 @@ public class BulletinServiceImpl implements BulletinService {
     @Override
     public Integer addBulletin(Bulletin bulletin) {
         bulletin.setId(null);
+        bulletin.setCreateTime(null);
+        bulletin.setUpdateTime(null);
         boolean bool = bulletinMapper.insert(bulletin) > 0;
         if (bool) {
             try {
@@ -121,6 +126,8 @@ public class BulletinServiceImpl implements BulletinService {
      */
     @Override
     public void updateBulletin(Bulletin bulletin) {
+        bulletin.setCreateTime(null);
+        bulletin.setUpdateTime(null);
         boolean bool = bulletinMapper.updateById(bulletin) > 0;
         if (bool) {
             try {

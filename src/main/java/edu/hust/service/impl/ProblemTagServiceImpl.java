@@ -11,6 +11,7 @@ import edu.hust.service.ProblemTagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,10 @@ public class ProblemTagServiceImpl implements ProblemTagService {
         List<ProblemTag> problemTags = problemTagMapper.selectList(new LambdaQueryWrapper<ProblemTag>().eq(ProblemTag::getTag, tag).last("limit " + (page - 1) * limit + "," + limit));
         List<Integer> problemIds = problemTags.stream().map(ProblemTag::getProblemId).toList();
         // 查询问题
-        List<Problem> problems = problemMapper.selectBatchIds(problemIds);
+        List<Problem> problems = new ArrayList<>();
+        if (!problemIds.isEmpty()) {
+            problems = problemMapper.selectBatchIds(problemIds);
+        }
         map.put("problems", problems);
         // 查询总数
         Long total = problemTagMapper.selectCount(new LambdaQueryWrapper<ProblemTag>().eq(ProblemTag::getTag, tag));

@@ -44,8 +44,18 @@ public enum ExceptionCodeEnum {
     PROBLEM_NOTE_READ_ERROR(1101, "题解读取失败"),
     PROBLEM_NOTE_DELETE_ERROR(1102, "题解删除失败"),
     PROBLEM_NOTE_EXIST(1103, "题解已存在"),
-    PROBLEM_NOTE_NOT_EXIST(1104, "题解不存在");
+    PROBLEM_NOTE_NOT_EXIST(1104, "题解不存在"),
 
+    CLASS_CREATE_ERROR(1110, "班级创建失败"),
+    CLASS_DELETE_ERROR(1111, "班级删除失败"),
+    CLASS_UPDATE_ERROR(1112, "班级更新失败"),
+    CLASS_NOT_EXIST(1113, "班级不存在"),
+    CLASS_NAME_ERROR(1114, "班级名词不存在或者过长"),
+
+    CLASS_USER_ADD_ERROR(1120, "添加班级用户失败"),
+    CLASS_USER_DELETE_ERROR(1121, "删除班级用户失败"),
+    CLASS_USER_EXIST(1122, "班级用户已存在"),
+    CLASS_USER_NOT_EXIST(1123, "班级用户不存在");
 
     private final Integer code;
     private final String msg;

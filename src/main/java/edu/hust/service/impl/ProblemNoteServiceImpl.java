@@ -120,11 +120,12 @@ public class ProblemNoteServiceImpl implements ProblemNoteService {
     @Override
     public void addProblemNote(ProblemNote problemNote) {
         Integer userId = JwtUtils.getUserId();
+        boolean isAdmin = JwtUtils.isAdmin();
         problemNote.setId(null);
         problemNote.setAuthorId(userId);
         problemNote.setCreateTime(null);
         problemNote.setUpdateTime(null);
-        problemNote.setStatus((byte) 0);
+        problemNote.setStatus(isAdmin ? (byte) 1 : (byte) 0);
         problemNote.setCollection(0);
 
         // 查询题目是否存在

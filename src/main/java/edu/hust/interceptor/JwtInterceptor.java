@@ -28,7 +28,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             return true;
         } catch (Exception exception) {
             map.put("code", "401");
-            map.put("msg", "token 已失效，请重新登录");
+            map.put("msg", "token error or expired");
         }
         String json = new ObjectMapper().writeValueAsString(map);
         response.setContentType("application/json:charset=UTF=8");

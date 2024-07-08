@@ -170,6 +170,7 @@ public class ProblemServiceImpl implements ProblemService {
         // 读取测试用例
         for (int i = 1; i <= problem.getSampleCount(); i++) {
             Map<String, Object> map = new HashMap<>();
+            resMap.add(map);
             String inputPath = "problemSet/" + problem.getAuthorId() + "/" + problem.getId() + "/in/" + i + ".in";
             String outputPath = "code/" + id + "/" + i + ".out";
             String error_path = "code/" + id + "/" + i + ".err";
@@ -196,7 +197,6 @@ public class ProblemServiceImpl implements ProblemService {
                 time += stat.real_time;
                 memory += stat.memory;
             }
-            resMap.add(map);
         }
         boolean accept = acceptCount == problem.getSampleCount();
         if (acceptCount == 0) acceptCount = 1;
